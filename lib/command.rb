@@ -1,4 +1,5 @@
 require 'optparse'
+require 'vagrant/util/powershell'
 
 module VagrantPlugins
   module CommandHVInfo
@@ -9,12 +10,17 @@ module VagrantPlugins
 
       def execute
         opts = OptionParser.new do |o|
-          o.banner = "Usage: vagrant address [name]"
+          o.banner = "Usage: vagrant hvinfo [name]"
         end
         argv = parse_options(opts)
         return if !argv
 
-        puts "Hello, #{argv[1]} !"
+        output = Vagrant::Util::PowerShell.execute_inline('ls C:/Ruby23-x64/')
+
+        puts "powershell output:"
+        puts "exit code: #{output.exit_code}"
+        puts "stdout: #{output.stdout}"
+        puts "stderr: #{output.stderr}"
       end
     end
   end

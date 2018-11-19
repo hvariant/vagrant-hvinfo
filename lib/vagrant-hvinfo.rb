@@ -15,3 +15,4 @@ module VagrantPlugins
     end
   end
 end
+
