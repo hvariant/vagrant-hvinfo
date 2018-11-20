@@ -9,5 +9,18 @@ Gem::Specification.new do |spec|
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.require_paths = ['lib']
+
+  spec.metadata = {
+    "homepage_uri" => 'https://github.com/hvariant/vagrant-hvinfo',
+    "source_code_uri" => 'https://github.com/hvariant/vagrant-hvinfo',
+  }
+
+  spec.bindir = 'bin'
+  spec.platform = Gem::Platform::CURRENT
+  spec.required_ruby_version = '>= 2.3.3'
+
+  spec.requirements << 'vagrant'
+  spec.requirements << 'Powershell v3 or newer'
+  spec.requirements << 'Hyper-V'
 end
 
