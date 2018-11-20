@@ -15,8 +15,6 @@ Gem::Specification.new do |spec|
     "source_code_uri" => 'https://github.com/hvariant/vagrant-hvinfo',
   }
 
-  spec.bindir = 'bin'
-  spec.platform = Gem::Platform::CURRENT
   spec.required_ruby_version = '>= 2.3.3'
 
   spec.requirements << 'vagrant'
