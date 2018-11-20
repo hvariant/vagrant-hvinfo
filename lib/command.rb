@@ -53,12 +53,13 @@ module VagrantPlugins
           end
         end
 
+        json_pretty = JSON.pretty_generate(vagrant_vms.values)
         if argv.length == 0
-          puts vagrant_vms.values.inspect
+          puts json_pretty
         else
           begin
             file = File.open(argv[0], "w")
-            file.write(vagrant_vms.values.inspect)
+            file.write(json_pretty)
           rescue IOError => e
             puts "Failed to write results to file #{argv[0]}, error: #{e.inspect}"
           rescue Errno::ENOENT => e
