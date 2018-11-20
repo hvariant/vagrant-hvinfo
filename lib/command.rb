@@ -15,6 +15,12 @@ module VagrantPlugins
           raise PowershellNotAvailable
         end
 
+        opts = OptionParser.new do |o|
+          o.banner = "Usage: vagrant hvinfo [output-file]"
+        end
+        argv = parse_options(opts)
+        return if !argv
+
         # Get CWD:
         cwd_result = run_powershell_inline_json("(Get-Item -Path '.\\').FullName")
         cwd = cwd_result.stdout
@@ -47,7 +53,20 @@ module VagrantPlugins
           end
         end
 
-        puts vagrant_vms.values.inspect
+        if argv.length == 0
+          puts vagrant_vms.values.inspect
+        else
+          begin
+            file = File.open(argv[0], "w")
+            file.write(vagrant_vms.values.inspect)
+          rescue IOError => e
+            puts "Failed to write results to file #{argv[0]}, error: #{e.inspect}"
+          rescue Errno::ENOENT => e
+            puts "Failed to write results to file #{argv[0]}, error: #{e.inspect}"
+          ensure
+            file.close unless file.nil?
+          end
+        end
       end
 
       private
