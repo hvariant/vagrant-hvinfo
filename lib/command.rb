@@ -1,5 +1,7 @@
 require 'optparse'
 require 'vagrant/util/powershell'
+require 'json'
+require_relative 'errors'
 
 module VagrantPlugins
   module CommandHVInfo
@@ -9,18 +11,36 @@ module VagrantPlugins
       end
 
       def execute
-        opts = OptionParser.new do |o|
-          o.banner = "Usage: vagrant hvinfo [name]"
+        if not Vagrant::Util::PowerShell.available?
+          raise PowershellNotAvailable
         end
-        argv = parse_options(opts)
-        return if !argv
 
-        output = Vagrant::Util::PowerShell.execute_inline('ls C:/Ruby23-x64/')
+        # Get CWD:
+        cwd_result = run_powershell_inline_json("(Get-Item -Path '.\\').FullName")
+        cwd = cwd_result.stdout
+        puts "Hey, here's the cwd: #{cwd}"
 
-        puts "powershell output:"
-        puts "exit code: #{output.exit_code}"
-        puts "stdout: #{output.stdout}"
-        puts "stderr: #{output.stderr}"
+        # Get IP Address and switch
+        network_result = run_powershell_inline_json("Get-VM | Where-Object {$_.State -eq 'Running'} | Select -ExpandProperty NetworkAdapters | Select VMName, IPAddresses, SwitchName | ConvertTo-Json")
+        network = JSON.parse(network_result.stdout)
+        puts "Hey, here's the network JSON: #{network.inspect}"
+
+        # Get Configuration Dir
+        config_result = run_powershell_inline_json("Get-VM | Where-Object {$_.State -eq 'Running'} | Select VMName, ConfigurationLocation | ConvertTo-Json")
+        config = JSON.parse(config_result.stdout)
+        puts "Hey, here's the config JSON: #{config.inspect}"
+      end
+
+      private
+
+      def run_powershell_inline_json(cmd)
+        result = Vagrant::Util::PowerShell.execute_inline(cmd)
+        
+        if result.exit_code != 0
+          raise Errors::PowershellCommandFailed.new cmd, result.exit_code, result.stdout, result.stderr
+        end
+
+        return result
       end
     end
   end
