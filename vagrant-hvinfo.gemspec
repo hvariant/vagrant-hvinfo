@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'vagrant-hvinfo'
-  spec.version       = '0.1.2'
+  spec.version       = '0.1.3'
   spec.authors       = ['Zhansong Li']
   spec.email         = ['lizhansong@hvariant.com']
   spec.summary       = 'Vagrant plugin for displaying information about Hyper-V VMs'
